@@ -88,6 +88,7 @@ public class FlowManager {
         let animationBlock = { () -> Void in
             self.coachMarksViewController.skipView?.asView?.alpha = 0.0
             self.coachMarksViewController.currentCoachMarkView?.alpha = 0.0
+            self.coachMarksViewController.nextView?.asView?.alpha = 0.0
         }
 
         let completionBlock = { [weak self] (finished: Bool) -> Void in

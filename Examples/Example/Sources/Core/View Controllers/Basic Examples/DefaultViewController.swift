@@ -26,7 +26,13 @@ internal class DefaultViewController: ProfileViewController,
         let skipView = CoachMarkSkipDefaultView()
         skipView.setTitle("Skip", for: .normal)
 
+        let nextView = CoachMarkNextDefaultView()
+        nextView.setTitle("next", for: .normal)
+
         self.coachMarksController.skipView = skipView
+        self.coachMarksController.nextView = nextView
+        self.coachMarksController.overlay.isUserInteractionEnabled = false
+
 
         if useInvisibleOverlay {
             self.coachMarksController.overlay.areTouchEventsForwarded = true

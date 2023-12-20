@@ -55,6 +55,24 @@ class CoachMarksViewController: UIViewController {
         }
     }
 
+    var nextView: (UIView & CoachMarkNextView)? {
+        willSet {
+            if newValue == nil {
+                self.nextView?.asView?.removeFromSuperview()
+                self.nextView?.nextControl?.removeTarget(self,
+                                                         action: #selector(didTapCoachMark(_:)),
+                                                         for: .touchUpInside)
+            }
+        }
+
+        didSet {
+            guard nextView != nil else { return }
+            addNextView()
+        }
+    }
+
+    private var nextViewConstaints: [NSLayoutConstraint] = []
+
     lazy var instructionsRootView: InstructionsRootView = {
         let view = InstructionsRootView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -240,6 +258,49 @@ class CoachMarksViewController: UIViewController {
 
         instructionsRootView.addSubview(skipView.asView!)
     }
+
+    private func addNextView() {
+        guard let nextView = nextView else { return }
+
+        nextView.asView?.alpha = 1.0
+        nextView.nextControl?.addTarget(self, action: #selector(didTapCoachMark(_:)),
+                                        for: .touchUpInside)
+        instructionsRootView.addSubview(nextView.asView!)
+
+    }
+
+    private func showNextView() {
+        guard let parentView = self.nextView?.asView?.superview else {
+            print(ErrorMessage.Info.skipViewNoSuperviewNotShown)
+            return
+        }
+
+        let constraints = getConstraintsForNextView(nextView: self.nextView!, parentView: parentView)
+
+        nextView?.asView?.translatesAutoresizingMaskIntoConstraints = false
+        parentView.removeConstraints(self.nextViewConstaints)
+
+        self.nextViewConstaints = []
+
+        self.nextViewConstaints = constraints
+
+        parentView.addConstraints(self.nextViewConstaints)
+        self.nextView?.asView?.alpha = 1.0
+        nextView?.asView?.superview?.bringSubviewToFront((nextView?.asView)!)
+    }
+
+    private func getConstraintsForNextView(nextView: (UIView), parentView: UIView) -> [NSLayoutConstraint] {
+        var constraints: [NSLayoutConstraint] = []
+        let topMargin: CGFloat = 20
+
+        constraints.append(contentsOf: [
+            nextView.centerYAnchor.constraint(equalTo: parentView.centerYAnchor, constant: 0),
+            nextView.heightAnchor.constraint(equalToConstant: 44.0),
+            nextView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -topMargin)
+        ])
+
+        return constraints
+    }
 }
 
 // MARK: - Coach Mark Display
@@ -254,6 +315,10 @@ extension CoachMarksViewController {
                                                  duration: self.overlayManager.fadeAnimationDuration)
             }
 
+            if let nextView = self.nextView {
+                nextView.asView?.superview?.bringSubviewToFront(nextView.asView!)
+            }
+            self.showNextView()
             self.enableInteraction()
             completion()
         })
@@ -303,6 +368,7 @@ extension CoachMarksViewController {
         overlayManager.overlayView.isUserInteractionEnabled = false
         currentCoachMarkView?.isUserInteractionEnabled = false
         skipView?.asView?.isUserInteractionEnabled = false
+        nextView?.asView?.isUserInteractionEnabled = false
     }
 
     private func enableInteraction() {
@@ -310,6 +376,7 @@ extension CoachMarksViewController {
         overlayManager.overlayView.isUserInteractionEnabled = true
         currentCoachMarkView?.isUserInteractionEnabled = true
         skipView?.asView?.isUserInteractionEnabled = true
+        nextView?.asView?.isUserInteractionEnabled = true
     }
 }
 

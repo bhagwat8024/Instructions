@@ -102,6 +102,12 @@ public extension CoachMarksController {
         get { return coachMarksViewController.skipView }
         set { coachMarksViewController.skipView = newValue }
     }
+
+    var nextView: (UIView & CoachMarkNextView)? {
+        get { return coachMarksViewController.nextView }
+        set { coachMarksViewController.nextView = newValue }
+    }
+
 }
 
 // MARK: - Flow management
