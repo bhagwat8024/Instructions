@@ -271,7 +271,7 @@ class CoachMarksViewController: UIViewController {
 
     private func showNextView() {
         guard let parentView = self.nextView?.asView?.superview else {
-            print(ErrorMessage.Info.skipViewNoSuperviewNotShown)
+            print(ErrorMessage.Info.nextViewNoSuperViewNotShown)
             return
         }
 

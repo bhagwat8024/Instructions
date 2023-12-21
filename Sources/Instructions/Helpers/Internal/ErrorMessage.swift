@@ -16,6 +16,8 @@ struct ErrorMessage {
 
         static let skipViewNoSuperviewNotUpdated =
             "[INFO] skipView has no superview and won't be updated."
+        static let nextViewNoSuperViewNotShown =
+            "[INFO] nextView has no superview and won't be shown."
     }
 
     struct Warning {
